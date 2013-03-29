@@ -1,8 +1,23 @@
-form(action='/login', method='post')
-  #name-container
-    label Username:
-    input(type='text', name='username')
-  #pwd-container
-    label Password:
-    input(type='password', name='password')
-  input(type='submit', value='Login')
+doctype 5
+html
+  head
+    link(rel='stylesheet', href='/stylesheets/login.css')
+      
+  body
+    h1 Login to Talk2Us
+    .outline
+      form(action='/login', method='post')
+        .row
+          span.label Username:
+          span.formw 
+            input(type='text', name='username')
+        .row
+          span.label Password:
+          span.formw 
+            input(type='password', name='password')
+        .row
+          .button
+            input(type='submit', value='Login')
+    .outline(width='20%')
+      a(href='/auth/facebook')
+        img(src='/images/login-with-facebook.png', width='154', height='22')

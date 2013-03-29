@@ -1,0 +1,51 @@
+label {
+    width: 110px;
+    margin: 6px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+input {
+    width: 249px;
+    float: top;
+    position: relative;
+}
+
+input[type=submit] {
+    width: 150px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+div.row {
+    clear: both;
+    padding-top: 12px;
+}
+
+div.row.span.label {
+    float: left;
+    width: 200px;
+    text-align: right;
+}
+
+div.row.span.formw {
+    float: right;
+    height: 15px;
+    width: 250px;
+    text-align: left;
+}
+
+div.outline {
+    width: 40%;
+    border: 2px solid;
+    padding: 12px;
+    margin: 0px auto;
+}
+
+div.row.button {
+    font-weight: bold;
+}
+
+h1 {
+    text-align: center;
+}
