@@ -12,11 +12,20 @@ var express = require('express')
   , Schema = mongoose.Schema
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
-  , FacebookStrategy = require('passport-facebook').Strategy;
+  , FacebookStrategy = require('passport-facebook').Strategy
+  , websocket = require('websocket');
 
 var db = mongoose.connect('mongodb://localhost/useradmin')
   , fbPrefix = '_fb_'
   , User;
+
+var wsServer
+  , httpSocketServer
+  , sockServerPort = 3000
+  , httpServerPort = 8080
+  , connList = [];
+
+var debugEnabled = true;
 
 mongoose.model('User', 
 		       new Schema({'userid': { type: String, index: { unique: true } },
@@ -31,11 +40,17 @@ var app = express();
 
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', process.env.PORT || httpServerPort);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
   app.use(express.logger('dev'));
+  app.use(function(req, res, next){
+      res.expose = {};
+      next();
+  });
+
+
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser('your secret here'));
@@ -54,6 +69,7 @@ app.get('/', routes.index);
 
 app.get('/login', function(req, res) {
     if (req.user) {
+        res.expose.user = req.user;
         res.redirect('/');
     } else {
         res.render('login');
@@ -83,28 +99,8 @@ app.get('/auth/facebook/callback',
            res.redirect('/');
        });
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+  debug("Express server listening on port " + app.get('port'));
 });
-
-
-function authenticateWithDatabase (user, pass, fn) {
-    console.log('User: ' + user + ', Password: ' + pass);
-
-	User.findOne({userid: user}, function(err, doc) {
-		if (err || !doc || doc.password != pass) {
-			return fn(null, null);
-		}
-        return fn(null, doc);
-	});
-}
-
-function findById(id, fn) {
-    var User = mongoose.model('User');
-    User.findOne({userid: id }, function(err, doc) {
-        fn(err, doc);
-    });
-
-}
 
 
 passport.use(new LocalStrategy(
@@ -127,7 +123,7 @@ passport.use(
     new FacebookStrategy({
         clientID: '558449554176735',
         clientSecret: 'a5fe9b923933d36278a827e854ad82a7',
-        callbackURL: "http://127.0.0.1:3000/auth/facebook/callback",
+        callbackURL: "http://127.0.0.1:8080/auth/facebook/callback",
         profileFields: ['id', 'displayName']  },
                          function(accessToken, refreshToken, profile, done) {
                              process.nextTick(function() {
@@ -154,6 +150,164 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+
+/*
+ * Websocket server for handling peer-to-peer signaling
+ */
+
+httpSocketServer = http.createServer(function(req, res) {
+    return true;
+});
+
+httpSocketServer.listen(sockServerPort, function() {
+    debug('Websocket server listening on port ' + sockServerPort);
+});
+
+wsServer = new websocket.server({
+    httpServer: httpSocketServer,
+    autoAcceptConnections: false
+});
+
+
+wsServer.on('request', function(request) {
+   var conn = request.accept('talk2us', request.origin);
+    debug('Connection from ' + conn.remoteAddress + ' accepted');
+
+    conn.on('message', function(message) {
+       if (message.type === 'utf8') {
+           processMessage(this, message.utf8Data);
+       } else if (message.type === 'binary'){
+           debug('Received ' + message.binaryData.length +
+                 ' bytes of binary data unexpectedly');
+       } else {
+           debug('Unexpected message type ' + message.type);
+       }
+    });
+
+    conn.on('close', function(reasonCode, description) {
+        debug('Closed connection ' + conn.remoteAddress + 
+              ' reason ' + reasonCode);
+        removeConnInfo(this);
+        listConnInfo();
+    });
+
+    function processMessage(connection, data) {
+        var conn = null
+          , item = null
+          , senderInfo = null
+          , receiverInfo = null
+          , msg = JSON.parse(data);
+
+        debug('Received msg of type ' + msg.msg_type);
+ 
+        switch(msg.msg_type) {
+
+        case 'ROOM':
+            if (getConnInfo(connection)) {
+                debug('ROOM request sent from existing connection');
+                return;
+            }
+            var connInfo = new ConnInfo(connection, msg.role, 
+                                        msg.room, null);
+            connList.push(connInfo);
+            debug('New ' + msg.role + ' connection in room ' + msg.room);
+            break;
+
+        case 'OFFER':
+            senderInfo = getConnInfo(connection);
+            if (!senderInfo) {
+                debug('Offer received from unknown connection');
+                return;
+            }
+            if (senderInfo.role !== 'CLIENT') {
+                debug('Exception: only CLIENT can make offer');
+                return;
+            }
+            debug('Offer from ' + senderInfo.role + 
+                  ' in room ' + senderInfo.room);
+
+            receiverInfo = getAvailableProvider(senderInfo.room);
+            if (!receiverInfo) {
+                debug('No provider found in room ' + senderInfo.room);
+                listConnInfo();
+                return;
+            }
+            senderInfo.other = receiverInfo.conn;
+            receiverInfo.other = senderInfo.conn;
+            receiverInfo.conn.send(JSON.stringify(msg));
+            break;
+
+        case 'ANSWER':
+            senderInfo = getConnInfo(connection);
+            if (!senderInfo) {
+                debug('Answer received from unknown connection');
+                return;
+            }
+            senderInfo.other.send(JSON.stringify(msg));
+            break;
+
+        case 'CANDIDATE':
+            senderInfo = getConnInfo(connection);
+            if (!senderInfo) {
+                debug('Candidate received from unknown connection');
+                return;
+            }
+            if (!senderInfo.other) {
+                debug('Peer unknown for sending candidate');
+                return;
+            }
+            senderInfo.other.send(JSON.stringify(msg));
+            break;
+
+        case 'HANGUP':
+            senderInfo = getConnInfo(connection);
+            if (!senderInfo) {
+                debug('Hangup received from unknown connection');
+                return;
+            }
+            if (!senderInfo.other) {
+                debug('Peer unknown for sending hangup');
+                return;
+            }
+            receiverInfo = getConnInfo(senderInfo.other);
+            senderInfo.other.send(JSON.stringify(msg));
+            // Remove the pairing information
+            if (receiverInfo) {
+                receiverInfo.other = null;
+            } else {
+                debug('Recepient for hangup not registered');
+            }
+            senderInfo.other = null;
+            break;
+
+        default:
+            debug('Unknown message type ' + msg.msg_type);
+            break;
+        }
+    }
+});
+
+
+function authenticateWithDatabase (user, pass, fn) {
+    debug('User: ' + user + ', Password: ' + pass);
+
+	User.findOne({userid: user}, function(err, doc) {
+		if (err || !doc || doc.password != pass) {
+			return fn(null, null);
+		}
+        return fn(null, doc);
+	});
+}
+
+function findById(id, fn) {
+    var User = mongoose.model('User');
+    User.findOne({userid: id }, function(err, doc) {
+        fn(err, doc);
+    });
+
+}
+
+
 function cbOnAuth(err, user, done) {
     if (err) return done(err);
     if (!user) {
@@ -167,14 +321,78 @@ function addOrFind(id, displayName, fn, done) {
     User.findOne({ userid: id }, function(err, doc) {
         if (!err && !doc) {
            // insert id and displayName in the db
-            var user = new User({ userid: id, display: displayName });
+            var user = new User({ userid: id, display: displayName, role: 'client' });
             user.save(fn(err, user, done));
         } else {
             if (err) {
-                console.log(err.toString());
+                debug(err.toString());
             }
             // TODO: check if display name has changed
             fn(err, doc, done);
         }
     });
 }
+
+
+function debug(s) {
+    if (debugEnabled) {
+        console.log((new Date()) + ' ' + s);
+    }
+}
+
+function ConnInfo(connection, role, room, other) {
+    this.conn = connection;
+    this.role = role;
+    this.room = room;
+    this.other = other;
+}
+
+function getConnInfo(conn) {
+    for (var i = 0; i < connList.length; i++) {
+        if (connList[i].conn == conn) {
+            break;
+        }
+    }
+    if (i === connList.length) {
+        return null;
+    } else {
+        return connList[i];
+    }
+}
+
+function removeConnInfo(conn) {
+    for (var i = 0; i < connList.length; i++) {
+        if (connList[i].conn == conn) {
+            break;
+        }
+    }
+    if (i < connList.length) {
+        debug('Removing ' + connList[i].role + ' in room ' + connList[i].room);
+        connList.splice(i, 1);
+    } else {
+        debug('Connection not found for deletion');
+    }
+}
+
+function listConnInfo() {
+    debug('Number of registered connections is ' + connList.length);
+    for (var i = 0; i < connList.length; i++) {
+        debug(+i + ': ' + connList[i].role + ' in room ' + connList[i].room);
+    }
+}
+
+function getAvailableProvider(room) {
+    for (var i = 0; i < connList.length; i++) {
+        if (connList[i].role === 'PROVIDER' &&
+            connList[i].room === room &&
+            connList[i].other == null) {
+            break;
+        }
+    }
+    if (i === connList.length) {
+        return null;
+    } else {
+        return connList[i];
+    }
+}
+

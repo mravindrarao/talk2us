@@ -1,11 +1,42 @@
-body {
-  padding: 50px;
-  font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+video {
+    border: 1px solid;
+    position: relative;
+    float: left;
+    width: 500px;
+    height: 375px;
 }
 
-h1 {
-  font: 28px "Palatino Linotype", Book Antiqua, Palatino, serif;
+.spacer {
+    width: 40px;
+    position: relative;
+    float: left;
+    height: 375px;
 }
-a {
-  color: #00B7FF;
+
+#connectbtn {
+    position: absolute;
+    left: 350px;
+    top: 450px;
+    width: 150px;
+    height: 40px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+#hangupbtn {
+    position: absolute;
+    left: 540px;
+    top: 450px;
+    width: 150px;
+    height: 40px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+#logout {
+    position: absolute;
+    top: 500px;
+    left: 950px;
 }
