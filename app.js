@@ -65,12 +65,27 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+var ensureAuthenticated = function(req, res, next){
+    if ( !req.session.userid ) {
+        req.session.redirect_to = req.path;
+        res.redirect('/login');
+    } else {
+        next();
+    }
+};
+
 app.get('/', routes.index);
 
 app.get('/login', function(req, res) {
+    var redirect_to = req.session.redirect_to ? req.session.redirect_to : '/';
+    delete req.session.redirect_to;
+
+    if (req.query.redirect_to)
+        redirect_to = req.query.redirect_to;
+
     if (req.user) {
         res.expose.user = req.user;
-        res.redirect('/');
+        res.redirect(redirect_to);
     } else {
         res.render('login-foundation');
     }
