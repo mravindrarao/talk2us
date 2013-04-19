@@ -32,10 +32,12 @@ block content
       .row.collapse
         .large-4.columns
           //img(src='static/images/login.png', width='100%')
-          video#local-video(autoplay='autoplay')
+          .videopanel
+            video#local-video(autoplay='autoplay')
         .large-4.columns
           //img(src='static/images/conversations.png', width='100%')
-          video#remote-video(autoplay='autoplay')
+          .videopanel
+            video#remote-video(autoplay='autoplay')
         .large-4.columns
           img(src='static/images/callme.png', width='100%')
   .row
