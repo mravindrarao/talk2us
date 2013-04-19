@@ -4,6 +4,9 @@
  */
 
 exports.index = function(req, res){
+  if (req.user)  {
+      res.shared.user = req.user;
+  }
   res.render('index-foundation');
 /*
   if (req.user) {
