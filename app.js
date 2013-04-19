@@ -80,7 +80,6 @@ app.get('/login', function(req, res) {
         redirect_to = req.query.redirect_to;
 
     if (req.user) {
-        res.expose.user = req.user;
         res.redirect(redirect_to);
     } else {
         res.render('login-foundation');
