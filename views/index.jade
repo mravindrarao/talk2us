@@ -1,11 +1,8 @@
 extends layout
 
 block content
-  script(src='/static/javascripts/jquery-1.9.1.min.js')
-  if role == 'provider'
-    script(src='/static/javascripts/provider.js')
-  else
-    script(src='/static/javascripts/client.js')
+  script(src='/javascripts/jquery-1.9.1.min.js')
+  script(src='/javascripts/script.js')
   #container
     #local
       video#local-video(autoplay='autoplay')

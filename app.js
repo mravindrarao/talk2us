@@ -13,7 +13,8 @@ var express = require('express')
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , FacebookStrategy = require('passport-facebook').Strategy
-  , websocket = require('websocket');
+  , websocket = require('websocket')
+  , jshare = require('jshare');
 
 var db = mongoose.connect('mongodb://localhost/useradmin')
   , fbPrefix = '_fb_'
@@ -45,18 +46,13 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.use(express.favicon());
   app.use(express.logger('dev'));
-  app.use(function(req, res, next){
-      res.expose = {};
-      next();
-  });
-
-
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser('your secret here'));
   app.use(express.session({ cookie: { maxAge: 60000 }}));
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(jshare('shared'));
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -234,7 +230,7 @@ wsServer.on('request', function(request) {
                 debug('Offer received from unknown connection');
                 return;
             }
-            if (senderInfo.role !== 'CLIENT') {
+            if (senderInfo.role !== 'client') {
                 debug('Exception: only CLIENT can make offer');
                 return;
             }
@@ -398,7 +394,7 @@ function listConnInfo() {
 
 function getAvailableProvider(room) {
     for (var i = 0; i < connList.length; i++) {
-        if (connList[i].role === 'PROVIDER' &&
+        if (connList[i].role === 'provider' &&
             connList[i].room === room &&
             connList[i].other == null) {
             break;
