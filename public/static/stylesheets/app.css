@@ -5570,15 +5570,45 @@ table tfoot tr td {
 }
 
 /* line 57, ../sass/app.scss */
-.moveup {
-  margin-top: -50px;
-  z: 10;
+.widget-button {
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: normal;
+  line-height: 1;
+  margin: 0 0 1.25em;
+  position: relative;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  padding-top: 0.75em;
+  padding-right: 1.5em;
+  padding-bottom: 0.8125em;
+  padding-left: 1.5em;
+  font-size: 1em;
+  background-color: #2ba6cb;
+  border-color: #2284a1;
+  color: white;
+  margin: 0px;
+}
+/* line 114, ../../../../../../../Library/Ruby/Gems/1.8/gems/zurb-foundation-4.1.2/scss/foundation/components/_buttons.scss */
+.widget-button:hover, .widget-button:focus {
+  background-color: #2284a1;
+}
+/* line 125, ../../../../../../../Library/Ruby/Gems/1.8/gems/zurb-foundation-4.1.2/scss/foundation/components/_buttons.scss */
+.widget-button:hover, .widget-button:focus {
+  color: white;
 }
 
 /* line 62, ../sass/app.scss */
+.moveup {
+  margin-top: -50px;
+  z: 100;
+}
+
+/* line 67, ../sass/app.scss */
 .videopanel {
-  width: 320px;
-  height: 240px;
   border-style: solid;
   border-width: 1px;
   border-color: #d0d0d0;

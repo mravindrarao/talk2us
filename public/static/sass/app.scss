@@ -54,13 +54,16 @@
   }
 }
 
+.widget-button {
+  @include button;
+  margin:  0px;
+}
+
 .moveup {
 	margin-top: -50px;
-	z:10;
+	z:100;
 }
 
 .videopanel {
-  width: 320px;
-  height: 240px;
   @include panel($secondary-color, 0px);
 }
