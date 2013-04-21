@@ -96,6 +96,7 @@
 .svg .fc-webicon.facebook { background: url("/static/images/fc-webicon-facebook.svg"); }
 
 .fc-webicon.customlogo.large { background: url("/static/images/custom-logo.png"); }
+.fc-webicon.customlogo { background: url("/static/images/custom-logo.png"); }
 
 /* Flickr */
 .no-svg .fc-webicon.flickr { background: url("images/fc-webicon-flickr-m.png"); }

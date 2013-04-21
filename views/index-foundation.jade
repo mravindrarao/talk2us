@@ -35,7 +35,43 @@ block content
             .button-bar
               ul.button-group
                 li
-                  strong(style='color:white') Josh
+                  i.icon-user.icon-2x(style='color:green')
+                li
+                  &nbsp
+                li
+                  span(style='color:white') Login using
+          .row
+            br
+          div.button-bar
+            ul.button-group
+              li &nbsp
+            ul.button-group
+              li
+                a(href="/auth/facebook").fc-webicon.facebook
+            ul.button-group
+              li
+                a(href="#").fc-webicon.googleplus
+            ul.button-group
+              li
+                a(href="/auth/facebook").fc-webicon.customlogo
+          .large-12.columns
+             form(action='/login', method='post')
+               fieldset(style='margin:0')
+                .row
+                  .large-12.columns
+                    input(type="text", placeholder="Your email id", name='username')
+                .row
+                  .large-8.columns
+                    input(type="password", placeholder="Password", name='password')
+                  a(href="#")  (forgot?)
+                .row
+                  .large-12.columns
+                    button.alert.radius(type='submit', value='Login', style='margin:0') Sign-in
+                    span    or
+                    a(href="#")    create an account
+        .large-4.columns
+          .contain-to-grid
+            .button-bar
               ul.button-group
                   li
                     button.widget-button.small
@@ -58,18 +94,14 @@ block content
         .large-4.columns
             .contain-to-grid
                 .button-bar
-                  ul.button-group
-                    li
-                      strong(style='color:white') Begin a conversation
                   ul.button-group.right(style='margin-right:0')
                     li
                       button.widget-button.small
-                         i.icon-resize-small.icon-large(style='color:green')
+                        i.icon-remove.icon-large(style='color:red')
                 .videopanel
                     img(src='static/images/conversations.png', width='100%')
 
-        .large-4.columns
-          img(src='static/images/callme.png', width='100%')
+
   .row
     .large-6.columns
       h3 Increase conversion rates, Reduce support costs for your websites
