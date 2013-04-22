@@ -5564,12 +5564,12 @@ table tfoot tr td {
   max-width: 800px;
 }
 
-/* line 50, ../sass/app.scss */
+/* line 50, ../../sass/app.scss */
 .top-bar .name h1 a {
   padding: 0 0;
 }
 
-/* line 57, ../sass/app.scss */
+/* line 57, ../../sass/app.scss */
 .widget-button {
   border-style: solid;
   border-width: 1px;
@@ -5601,13 +5601,13 @@ table tfoot tr td {
   color: white;
 }
 
-/* line 62, ../sass/app.scss */
+/* line 62, ../../sass/app.scss */
 .moveup {
   margin-top: -50px;
   z: 100;
 }
 
-/* line 67, ../sass/app.scss */
+/* line 67, ../../sass/app.scss */
 .videopanel {
   border-style: solid;
   border-width: 1px;
