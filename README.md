@@ -9,22 +9,10 @@ for testing:
 > use useradmin
 switched to db useradmin
 > db.Users.find()
-{ "_id" : ObjectId("515134dc6f9d1c45976dcfb7"), "password" : "funky", "role" : "provider", "userid" : "Tobi" }
-{ "_id" : ObjectId("5151352c6f9d1c45976dcfb8"), "password" : "ikol", "role" : "provider", "userid" : "Loki" }
 { "_id" : ObjectId("515135426f9d1c45976dcfb9"), "password" : "enaj", "role" : "provider", "userid" : "Jane" }
-
-
-Changes
-=======
-Included the video rtc code so that on login, video chat can be used.
-
-Added sub-document 'role' to documents in the Users collection.
-
-Users directly added in the mongo database are added with 'role' set
-as 'provider'.
-
-When adding Facebook user to the Mongo database, the sub-document
-'role' is set to 'client'.
+{ "_id" : ObjectId("5151352c6f9d1c45976dcfb8"), "display" : "Loki the Norse", "password" : "ikol", "role" : "provider", "userid" : "Loki" }
+{ "_id" : ObjectId("515134dc6f9d1c45976dcfb7"), "display" : "", "password" : "funky", "role" : "provider", "userid" : "Tobi" }
+>
 
 Caveats
 =======

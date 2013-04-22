@@ -21,7 +21,14 @@ block content
               li
                 button FAQ
               li
-                button(onClick="window.location='/login?redirect_to=/'") Sign-in
+                if locals.user
+                  if locals.user.display
+                    username = user.display
+                  else
+                    username = user.userid
+                  button(onClick="window.location='/login?redirect_to=/'")= username
+                else
+                  button(onClick="window.location='/login?redirect_to=/'") Sign-in
         .row
           .large-7.columns
             h2.subheader In-place, real-time conversations for your website.
