@@ -87,7 +87,7 @@ app.get('/login', function(req, res) {
 });
 app.get('/logout', function(req, res) {
     req.logout();
-    res.redirect('/login-foundation');
+    res.redirect('/');
 });
 
 app.post('/login',

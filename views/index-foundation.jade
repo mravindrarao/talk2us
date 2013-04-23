@@ -20,15 +20,21 @@ block content
                 button Demo
               li
                 button FAQ
-              li
-                if locals.user
-                  if locals.user.display
-                    username = user.display
-                  else
-                    username = user.userid
-                  button(onClick="window.location='/login?redirect_to=/'")= username
+          ul.right
+            li
+              if locals.user
+                if locals.user.display
+                  username = user.display
                 else
-                  button(onClick="window.location='/login?redirect_to=/'") Sign-in
+                  username = user.userid
+                a.button.large.dropdown(data-dropdown='logged-dropdown', href='#', color='#2ba6cb', border-color='#2284a1')= username
+              else
+                button(onClick="window.location='/login?redirect_to=/'") Sign-in
+              ul#logged-dropdown.f-dropdown(data-dropdown-content=" ")
+                li
+                  a(href='#') Settings
+                li
+                  a(href='/logout') Sign out
         .row
           .large-7.columns
             h2.subheader In-place, real-time conversations for your website.
