@@ -40,7 +40,7 @@ block content
             h2.subheader In-place, real-time conversations for your website.
           .large-4.columns
             button.alert.right Start conversations for your site
-  .row
+  .row(ng-controller='ChatCtrl')
     .large-12.columns
       .row.collapse
         .large-4.columns
@@ -112,8 +112,17 @@ block content
                     li
                       button.widget-button.small
                         i.icon-remove.icon-large(style='color:red')
-                .videopanel
-                    img(src='app/img/conversations.png', width='100%')
+                .videopanel(style='height:212px; margin:0px')
+                  p(ng-repeat='message in messages') {{message.user}}: {{message.text}}
+                .row.collapse
+                    form(ng-submit='sendMessage()')
+                      .large-9.columns
+                        input(type="text", placeholder="Send a message", name='msg',style='margin:0px',
+                           ng-model='message')
+                      .large-3.columns
+                        button.alert.small.radius(type='submit', value='Login', style='width:100%;margin:0;') Send
+
+
 
 
   .row

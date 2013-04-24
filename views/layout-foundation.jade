@@ -2,7 +2,7 @@
 //if IE 8
   html.no-js.lt-ie9(lang='en')  
 // [if gt IE 8] <!
-html.no-js(lang='en')
+html.no-js(lang='en', ng-app="talk2us")
   // <![endif]
   head
     meta(charset='utf-8')
@@ -41,9 +41,14 @@ html.no-js(lang='en')
               a(href='#')
                 span.round.alert.label Get Talk2us
             li.right Copyright 2013
+    script(src='/socket.io/socket.io.js')
     script(src='/app/lib/vendor/jquery.js')
-    script(src='/app/js/script.js')
     script(src='/app/lib/angular/angular.min.js')
+    script(src='/app/js/app.js')
+    script(src='/app/js/controllers.js')
+    script(src='/app/js/directives.js')
+    script(src='/app/js/filters.js')
+    script(src='/app/js/services.js')
     script(src='app/lib/foundation/foundation.js')
     script(src='app/lib/foundation/foundation.alerts.js')
     script(src='app/lib/foundation/foundation.clearing.js')
@@ -60,3 +65,5 @@ html.no-js(lang='en')
     script(src='app/lib/foundation/foundation.topbar.js')
     script
       $(document).foundation();
+
+
