@@ -33,7 +33,7 @@ factory('webrtc', [ "$rootScope",  "$window", "socketio", function($rootScope, w
         role = 'client',
         stunServer = 'stun:stun.l.google.com:19302';
 
-    var nav = navigator;
+    var nav = win.navigator;
 
     nav.getUserMedia = nav.getUserMedia ||
                             nav.webkitGetUserMedia ||
