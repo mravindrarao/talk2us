@@ -11,7 +11,7 @@
     "passport": "~0.1.16",
     "passport-local": "~0.1.6",
     "passport-facebook": "~0.1.5",
-    "mongoose": "~3.6.7",
+    "mongoose": "~5.7.8",
     "websocket": "~1.0.8",
     "jshare": "0.0.8",
     "socket.io":"0.9.14"
